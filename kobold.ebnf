@@ -48,7 +48,7 @@ class_instance = struct_identifier, "{", [arg_list], "}";
 (* Expressions *)
 message_send = "[", identifier, (identifier | arg_list), "]";
 call_send = "[", struct_identifier, (identifier | arg_list), "]";
-arg_list = arg_pair, {",", arg_pair};
+arg_list = arg_pair, {arg_pair};
 arg_pair = identifier, ":", expression;
 
 (* TODO: Fix how we descibe operations *)
