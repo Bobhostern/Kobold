@@ -1,0 +1,16 @@
+module Test
+
+#struct Nop {} #9
+
+#message Nop [nop] -> Nop {
+    #return Nop {};
+#}
+
+let y = 3 + 5 * 9 / 54.08
+#####~~~HOW TO PARSE A DECIMAL STRING~~~#####
+# Treat decimal part as Integer
+# Ex: 2.08 = 2 Integer 8(int) Decimal
+# Divide it by 10 to the power of size of original string
+# Ex: 2.08 = 2 Integer 8(int)/10^2(size of string) Decimal
+# Add them together
+# Ex: 2.08 = 2 Integer + 8(int)/10^2(size of string) Decimal

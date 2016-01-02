@@ -1,0 +1,41 @@
+module Main;
+
+struct Nop{};
+
+# [] indicates inheritance. We use BETA-style alternative inheritance: inner instead of super
+# <> indicates composition. This simply copies all members of a struct into another.
+struct Main
+#[Nop] <Nop>
+{
+#    x: Int32,
+#    y: Int32
+};
+
+# message - used in objects
+# call - used  in class objects (static message)
+
+# ; like in Rust, simply returns Nothing, and used to separate statements
+#call Main [start: String] ->- Nothing {
+#    [IO print: start];
+#}
+
+#call Main [x: Integer, y: Integer]->Main {
+    # Exclusive to message bodies: instance syntax
+    # Can only be done if the struct that is being instanced is the struct of the message
+#    return Main {x: x, y: y};
+#}
+
+#main {
+    #if [System isScript] then {
+    #    [Main start: "Wow!"];
+    #}
+
+    #let x = [Main new];
+
+    # Or more idiomatically...
+    #if [isScript] then {
+    #    [Main start: "Cool!"];
+    #}
+
+    #let y = 3 * 0.4;
+#}

@@ -1,0 +1,14 @@
+module Advanced;
+
+# A trait is just a partially implemented struct
+# A trait can have call, and everything a struct has, but it cannot be instantiated
+# (construct syntax fails)
+# In addition, you can use vcall (virtual call), and vmessage (virtual message)
+# to create calls, and messages that simply call (inner).
+
+# () means generics. Place virtual type names here.
+#trait ConvertTo(X) {
+
+#};
+
+#vcall(X) ConvertTo(X) [convert: ConvertTo(X)] -> X;

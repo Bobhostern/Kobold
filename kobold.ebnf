@@ -1,0 +1,65 @@
+lchar = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" |
+    "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z";
+uchar = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" |
+    "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+char = lchar | uchar;
+
+(* Basic types *)
+integer = ["+" | "-"], digit, {digit};
+number = integer;
+boolean = "true" | "false";
+
+(* Comments - ignored by Kobold *)
+one_line_comment = "#", {?any?}, "\n";
+
+(* Marks identifiers for things like variables, or message names *)
+identifier = lchar, {char | digit | "_" | "!" | "?"};
+
+(* Marks things like class names *)
+struct_identifier = uchar, {char | digit | "_"};
+
+(* Used for module names *)
+module_identifier = char, {char | digit | "_"};
+
+module_declaration = "module", module_name, "(", module_exports, ")", ";";
+module_name = module_identifier; (* Temporarily using simple module names idea *)
+module_exports = [struct_identifier], {",", struct_identifier};
+
+struct_declaration = "struct", struct_identifier, ["[", parent, "]"], ["<", composition_list, ">"], "{", struct_body, "}", ";";
+parent = struct_identifier; (* Marks the struct we are inheiriting from. *)
+composition_list = struct_identifier, {",", struct_identifier}; (* Marks structs we are composing from *)
+struct_body = [struct_decl_pair], {",", struct_decl_pair};
+struct_decl_pair = identifier, ":", struct_identifier;
+
+message_decl = "message", struct_identifier, "[", message_identifier, "]", ["->", struct_identifier], "{", message_body, "}";
+call_decl = "call", struct_identifier, "[", message_identifier, "]", ["->", struct_identifier], "{", message_body, "}";
+message_identifier = identifier | mid_pair, {",", mid_pair};
+mid_pair = identifier, ":", struct_identifier;
+message_body = (* TBD *);
+main_decl = "main", "{", message_body, "}";
+
+return_statement = "return", expression;
+if_statement = "if", expression, "then", "{", message_body, "}"; (* TODO: Add else and else-ifs *)
+let_statement = "let", identifier, "=", expression; (* TODO: Add type specifier *)
+
+(* Special expression *)
+class_instance = struct_identifier, "{", [arg_list], "}";
+(* Expressions *)
+message_send = "[", identifier, (identifier | arg_list), "]";
+call_send = "[", struct_identifier, (identifier | arg_list), "]";
+arg_list = arg_pair, {",", arg_pair};
+arg_pair = identifier, ":", expression;
+
+(* TODO: Fix how we descibe operations *)
+(* Math *)
+addsub = multdiv, ("+" | "-"), multdiv;
+multdiv = pownor, ("*" | "/"), pownor;
+pownor = (expression, "**", expression) | addsub;
+
+cexpression = negnor, ("<" | ">" | "<=" | ">=" | "==" | "===" ), negnor;
+negnor = ("!", expression) | expression;
+(* TODO: Add comparison *)
+
+expression = integer | boolean | pexpression | message_send | call_send | pownor | negnor (* Math expression root *);
+pexpression = "(", expression, ")";

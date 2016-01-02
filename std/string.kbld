@@ -1,0 +1,11 @@
+module Std.String
+
+#struct String {
+#    data: char[]
+#};
+
+#message String [length] -> Integer {
+#    [this.data length]
+#    # Shorthand for:
+#    # [[this member:"data"] length]
+#}
