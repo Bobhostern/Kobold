@@ -79,10 +79,6 @@ impl ModuleManager {
         }
     }
 
-    pub fn find_module(&self, s: &str) -> Option<Module> {
-        None
-    }
-
     pub fn add_module(&mut self, s: &str, m: Module) {
         self.module_map.add_module(s, m);
     }

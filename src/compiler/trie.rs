@@ -15,6 +15,8 @@ pub struct Trie<'a, R> where R: Clone + PartialEq<R> {
     index: Arc<&'a Fn(char) -> i32>
 }
 
+type TrieResult<T> = Result<T, TrieError>;
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum TrieError {
     End, // Caused by a TrieNode::End(_) at the location
@@ -133,7 +135,7 @@ impl<'a, R> Trie<'a, R>
         }
     }
 
-    pub fn search(&self, f: &str) -> Result<R, TrieError> {
+    pub fn search(&self, f: &str) -> TrieResult<R> {
         match f.chars().nth(0){
             Some(c) => {
                 let index = &self.index;

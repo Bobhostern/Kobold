@@ -19,11 +19,11 @@ call BankAccount [newWithAmount: Number] -> BankAccount {
 }
 
 message BankAccount [withdraw: Number] {
-    this.money = this.money - withdraw
+    [this setData: "money" with: [this getData: "money"] - withdraw]
 }
 
 message BankAccount [deposit: Number] {
-    this.money = this.money + deposit
+    [this setData: "money" with: [this getData: "money"] + deposit]
 }
 
 call BankAccount [lendFrom: BankAccount, to: BankAccount, amount: Number] {

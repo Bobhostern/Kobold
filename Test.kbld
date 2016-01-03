@@ -6,7 +6,7 @@ module Test
     #return Nop {};
 #}
 
-let y = 3 + 5 * 9 / 54.08
+#let y = 3 + 5 * 9 / 54.08
 #####~~~HOW TO PARSE A DECIMAL STRING~~~#####
 # Treat decimal part as Integer
 # Ex: 2.08 = 2 Integer 8(int) Decimal

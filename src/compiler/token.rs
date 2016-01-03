@@ -35,6 +35,8 @@ pub enum TokenType {
     If,
     Inner,
     Message,
+    Call,
+    Main,
 }
 
 #[derive(Debug, Clone)]

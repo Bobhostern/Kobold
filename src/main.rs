@@ -77,9 +77,11 @@ fn load_modules(flst: &Vec<String>, mman: &mut ModuleManager) {
         let fs: File = File::open(file.clone()).ok().unwrap();
         let rdr = BufReader::new(fs);
         let mut lex = Lexer::new(&file, rdr);
+        lex.setup_defaults(); // Setups up the lexer tokens for our language: Kobold
         let ts = lex.process();
         // println!("{:#?}", ts);
         let mut parser = Parser::new(&file, ts);
+        parser.setup_defaults();
         let module_code = parser.parse_top();
         // println!("{:?}", module_code);
 

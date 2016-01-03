@@ -34,26 +34,30 @@ enum LexerState {
 
 impl<T: BufRead> Lexer<T> {
     pub fn new(name: &str, r: T) -> Lexer<T> {
-        let mut tmp = Lexer {
+        Lexer {
             source_name: name.to_string(),
             source: r,
             line: 1,
             ts: TokenStream::new(),
             ht: false,
             keywords: HashMap::new(),
-            accept_vec: vec!['{', '}', '-', '>', '[', ']', '<', '=', '+', '*', '/', ',', ':', '(', ')', '.'],
-        };
+            accept_vec: vec![],
+        }
+    }
 
-        tmp.keywords.insert("module".to_string(), TokenType::Module);
-        tmp.keywords.insert("struct".to_string(), TokenType::Struct);
-        tmp.keywords.insert("let".to_string(), TokenType::Let);
-        tmp.keywords.insert("if".to_string(), TokenType::If);
-        tmp.keywords.insert("inner".to_string(), TokenType::Inner);
-        tmp.keywords.insert("message".to_string(), TokenType::Message);
+    pub fn setup_defaults(&mut self) {
+        let mut default_vec = vec!['{', '}', '-', '>', '[', ']', '<', '=', '+', '*', '/', ',', ':', '(', ')', '.'];
+        self.accept_vec.append(&mut default_vec);
+        self.accept_vec.sort();
 
-        tmp.accept_vec.sort();
-
-        tmp
+        self.keywords.insert("module".to_string(), TokenType::Module);
+        self.keywords.insert("struct".to_string(), TokenType::Struct);
+        self.keywords.insert("let".to_string(), TokenType::Let);
+        self.keywords.insert("if".to_string(), TokenType::If);
+        self.keywords.insert("inner".to_string(), TokenType::Inner);
+        self.keywords.insert("message".to_string(), TokenType::Message);
+        self.keywords.insert("call".to_string(), TokenType::Call);
+        self.keywords.insert("main".to_string(), TokenType::Main);
     }
 
     pub fn process(&mut self) -> TokenStream {
@@ -196,14 +200,16 @@ impl<T: BufRead> Lexer<T> {
                         match c {
                             '0'...'9' => data.push(c),
                             '.' | 'e' => {data.push(c); state=LexerState::Float},
-                            _ => {ts.add(Token::new(TokenType::Integer, &data).with_line(self.line)); state=LexerState::Default;}
+                            _ => {ts.add(Token::new(TokenType::Integer, &data).with_line(self.line));
+                                advance = false; state=LexerState::Default;}
                         }
                     },
                     LexerState::Float => {
                         c=match fc.next(){Some(h)=>h,_=>break};
                         match c {
                             '0'...'9' => data.push(c),
-                            _ => {ts.add(Token::new(TokenType::Float, &data).with_line(self.line)); state=LexerState::Default;}
+                            _ => {ts.add(Token::new(TokenType::Float, &data).with_line(self.line));
+                                advance = false; state=LexerState::Default;}
                         }
                     },
                     // e @ _ => unreachable!("All states in a DST should be handled. {:?} {:?}", e, c)

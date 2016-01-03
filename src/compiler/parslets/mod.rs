@@ -1,5 +1,7 @@
 pub mod literal;
 pub mod operator;
+pub mod prec;
+pub mod call;
 
 use super::ast::Expression;
 use super::token::Token;

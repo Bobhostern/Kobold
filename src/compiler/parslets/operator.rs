@@ -1,7 +1,7 @@
 use super::PrefixParslet;
 use super::InfixParslet;
 use super::super::ast::Expression;
-use super::super::token::{Token/*, TokenType*/};
+use super::super::token::{Token};
 use super::super::parser::Parser;
 
 pub struct PrefixOpParslet {
@@ -16,7 +16,10 @@ impl PrefixOpParslet {
 }
 impl PrefixParslet for PrefixOpParslet {
     fn parse(&self, parser: &mut Parser, token: Token) -> Box<Expression> {
-        let expr = parser.parse_expression(self.precedence);
+        let expr = match parser.parse_expression(self.precedence) {
+            Some(x) => x,
+            None => panic!("Failed at prefix operator parsing at line {}", token.get_line())
+        };
         Box::new(Expression::PrefixExpression(token.get_line(), token.get_type(), expr))
     }
     fn dup(&self) -> Box<PrefixParslet> { Box::new(PrefixOpParslet::new(self.precedence)) }
@@ -40,9 +43,12 @@ impl InfixParslet for BinaryParslet {
             true => self.precedence,
             false => self.precedence - 1,
         };
-        let right = parser.parse_expression(prec);
+        let right = match parser.parse_expression(prec) {
+            Some(x) => x,
+            None => panic!("Failed at binary operator parsing at line {}", token.get_line())
+        };
         Box::new(Expression::BinaryExpression(token.get_line(), token.get_type(), left, right))
     }
     fn get_precedence(&self) -> i32 { self.precedence }
-    fn dup(&self) -> Box<InfixParslet> { return Box::new(BinaryParslet::new(self.precedence, self.left_rec)) }
+    fn dup(&self) -> Box<InfixParslet> { Box::new(BinaryParslet::new(self.precedence, self.left_rec)) }
 }
